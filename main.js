@@ -148,7 +148,6 @@ function functions(database) {
   dropdownOptionContinent(database);
   creatHtmlTable(database);
   // filterByContinent(database);
-  dropdownOptionLanguages(database);
   // dropdownContinentValueChanging(database);
   // dropdownLanguageValueChanging(database);
   dropdownValueChanging(database)
@@ -156,7 +155,6 @@ function functions(database) {
 
 // creating the table
 const creatHtmlTable = (database) => {
-  console.log('database :>> ', database);
   let table = document.getElementById("tBody");
   table.innerText = "";
   database.forEach((base, i) => {
@@ -192,12 +190,17 @@ const creatHtmlTable = (database) => {
 };
 
 // Creating the dropdown option for the language dropdown
-function dropdownOptionLanguages(data) {
+function dropdownOptionLanguages(database) {
+  const checkContinent = document.getElementById("continent-dropdown").value;
+  const continentFilter = database.filter((base) => {
+    return base.continents.includes(checkContinent) || checkContinent === "all";
+  });
+  console.log('continentFilter :>> ', continentFilter);
   const uniqueOptionsArrayLanguage = [];
   const dropdown = document.getElementById("languages-dropdown");
-  for (let i = 0; i < data.length; i++) {
-    if (data[i].languages && data[i].languages !== "undefined") {
-      const languagesArray = Object.values(data[i].languages);
+  for (let i = 0; i < continentFilter.length; i++) {
+    if (continentFilter[i].languages && continentFilter[i].languages !== "undefined") {
+      const languagesArray = Object.values(continentFilter[i].languages);
 
       for (let j = 0; j < languagesArray.length; j++) {
         if (!uniqueOptionsArrayLanguage.includes(languagesArray[j])) {
@@ -240,7 +243,7 @@ function dropdownValueChanging(database) {
     .getElementById("languages-dropdown")
     .addEventListener("change", change);
   function change() {
-    // filterByContinent(database);
+    dropdownOptionLanguages(database);
     combinedFilter(database)
   }
 }
@@ -322,44 +325,30 @@ const infoTable = (a, id, data) => {
 }
 
 // Search bar
-// Filtering by continent
-function filterByContinent(database, checkContinent) {
-  const continentFilter = database.filter((base) => {
-    return base.continents.includes(checkContinent) || checkContinent === "all";
-  });
-  console.log('continentFilter :>> ', continentFilter);
-  creatHtmlTable(continentFilter)
-  return continentFilter
-}
+// // Filtering by continent
+// function filterByContinent(database, checkContinent) {
+//   const continentFilter = database.filter((base) => {
+//     return base.continents.includes(checkContinent) || checkContinent === "all";
+//   });
+//   console.log('continentFilter :>> ', continentFilter);
+//   creatHtmlTable(continentFilter)
+//   return continentFilter
+// }
 
-// filtering by language
-function filterByLanguage(database, checkLanguages) {
-  const languageFilter = database.filter((base) => {
+// // filtering by language
+// function filterByLanguage(database, checkLanguages) {
+//   const languageFilter = database.filter((base) => {
    
-  });
-  console.log('languageFilter :>> ', languageFilter);
-  return languageFilter
-}
+//   });
+//   return languageFilter
+// }
 // Combining filtering
 function combinedFilter(database){
   const checkContinent = document.getElementById("continent-dropdown").value;
-  console.log('checkContinent :>> ', checkContinent);
   const checkLanguages = document.getElementById("languages-dropdown").value;
-  console.log('checkLanguages :>> ', checkLanguages);
-  let filtered = []
-  // if (
-  //   filterByLanguage(database, checkLanguages) 
-  //   filterByContinent(database, checkContinent)
-  // ){
-  //   filtered.push()
-  //   creatHtmlTable(filtered)
-  // }
 
   const filteredCountries = database.filter((country)=> {
-    console.log('database filterCombined :>> ', database);
-// return (
-//    && Object.values(country.languages).includes(checkLanguages) || checkLanguages === "all"
-// )
+
 if (country.languages && country.languages !== "undefined") {
   return (
     (country.continents.includes(checkContinent) || checkContinent === "all")  &&  (Object.values(country.languages).includes(checkLanguages) || checkLanguages === "all")
@@ -367,7 +356,6 @@ if (country.languages && country.languages !== "undefined") {
 }
   })
 
-  console.log("filteredCountries", filteredCountries)
   creatHtmlTable(filteredCountries)
 }
 // start
