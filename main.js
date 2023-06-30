@@ -266,6 +266,7 @@ function trInfo() {
       infoTable(a, event.target.id);
     });
   });
+  console.log(row);
 }
 
 // Creating the more info panel for the clicked country
