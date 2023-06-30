@@ -145,10 +145,10 @@ const getData = () => {
 
 // Function controller
 function functions(database) {
-  dropdownOptionContinent();
+  dropdownOptionContinent(database);
   creatHtmlTable(database);
   // filterByContinent(database);
-  dropdownOptionLanguages();
+  dropdownOptionLanguages(database);
   // dropdownContinentValueChanging(database);
   // dropdownLanguageValueChanging(database);
   dropdownValueChanging(database)
@@ -156,6 +156,7 @@ function functions(database) {
 
 // creating the table
 const creatHtmlTable = (database) => {
+  console.log('database :>> ', database);
   let table = document.getElementById("tBody");
   table.innerText = "";
   database.forEach((base, i) => {
@@ -187,11 +188,11 @@ const creatHtmlTable = (database) => {
     }
     row.appendChild(column5);
   });
-  trInfo();
+  trInfo(database);
 };
 
 // Creating the dropdown option for the language dropdown
-function dropdownOptionLanguages() {
+function dropdownOptionLanguages(data) {
   const uniqueOptionsArrayLanguage = [];
   const dropdown = document.getElementById("languages-dropdown");
   for (let i = 0; i < data.length; i++) {
@@ -213,20 +214,8 @@ function dropdownOptionLanguages() {
   }
 }
 
-// Eventlistener for the language dropdown
-// function dropdownLanguageValueChanging(database) {
-//   document
-//     .getElementById("languages-dropdown")
-//     .addEventListener("change", change);
-
-//   function change() {
-//     filterByLanguage(database);
-//   }
-// }
-
-
 // creating the dropdown option for the continent dropdown
-function dropdownOptionContinent() {
+function dropdownOptionContinent(data) {
   const uniqueOptionsArrayContinent = [];
   const dropdown = document.getElementById("continent-dropdown");
   for (let i = 0; i < data.length; i++) {
@@ -259,19 +248,18 @@ function dropdownValueChanging(database) {
 
 
 // Eventlistener for more country info
-function trInfo() {
+function trInfo(database) {
   let row = document.querySelectorAll("tr");
   row.forEach(function (a) {
     a.addEventListener("click", function (event) {
-      infoTable(a, event.target.id);
+      infoTable(a, event.target.id, database);
     });
   });
-  console.log(row);
 }
 
 // Creating the more info panel for the clicked country
 var count = 0
-const infoTable = (a, id) => {
+const infoTable = (a, id, data) => {
   const country = a.getElementsByClassName("country")[0].textContent;
   nameArray = [];
   for (let i = 0; i < data.length; i++) {
@@ -340,63 +328,48 @@ function filterByContinent(database, checkContinent) {
     return base.continents.includes(checkContinent) || checkContinent === "all";
   });
   console.log('continentFilter :>> ', continentFilter);
+  creatHtmlTable(continentFilter)
   return continentFilter
 }
 
 // filtering by language
 function filterByLanguage(database, checkLanguages) {
   const languageFilter = database.filter((base) => {
-    if (base.languages && base.languages !== "undefined") {
-      return (
-        Object.values(base.languages).includes(checkLanguages) || checkLanguages === "all"
-      );
-    }
+   
   });
   console.log('languageFilter :>> ', languageFilter);
   return languageFilter
 }
-// Combine filtering
+// Combining filtering
 function combinedFilter(database){
   const checkContinent = document.getElementById("continent-dropdown").value;
   console.log('checkContinent :>> ', checkContinent);
   const checkLanguages = document.getElementById("languages-dropdown").value;
   console.log('checkLanguages :>> ', checkLanguages);
   let filtered = []
-  if (
-    filterByLanguage(database, checkLanguages) &&
-    filterByContinent(database, checkContinent)
-  ){
-    console.log('filtered3 :>> ', filtered);
-    creatHtmlTable(filtered)
-  }
+  // if (
+  //   filterByLanguage(database, checkLanguages) 
+  //   filterByContinent(database, checkContinent)
+  // ){
+  //   filtered.push()
+  //   creatHtmlTable(filtered)
+  // }
+
+  const filteredCountries = database.filter((country)=> {
+    console.log('database filterCombined :>> ', database);
+// return (
+//    && Object.values(country.languages).includes(checkLanguages) || checkLanguages === "all"
+// )
+if (country.languages && country.languages !== "undefined") {
+  return (
+    (country.continents.includes(checkContinent) || checkContinent === "all")  &&  (Object.values(country.languages).includes(checkLanguages) || checkLanguages === "all")
+  );
 }
+  })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  console.log("filteredCountries", filteredCountries)
+  creatHtmlTable(filteredCountries)
+}
 // start
 getData()
+
